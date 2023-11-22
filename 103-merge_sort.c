@@ -15,21 +15,6 @@ void print_process(int *array, int l, int m, int r)
     print_array(array + l, (r - l + 1));
 }
 
-void print_array(const int *array, size_t size)
-{
-size_t i;
-
-i = 0;
-while (array && i < size)
-{
-if (i > 0)
-printf(", ");
-printf("%d", array[i]);
-++i;
-}
-printf("\n");
-}
-
 void merge_sort(int *array, size_t size)
 {
     if (array == NULL || size < 2)
@@ -52,41 +37,24 @@ void merge_sort_recursive(int *array, int l, int r)
 void merge(int *array, int l, int m, int r)
 {
     int left_length = m - l, right_length = r - m + 1;
-    int temp_left[left_length], temp_right[right_length];
+    int *temp = malloc(sizeof(int) * (r - l + 1));
     int i, j, k = l;
 
-    for (i = 0; i < left_length; i++)
-    temp_left[i] = array[i + l];
+    for (i = 0; i < left_length + right_length; i++)
+    temp[i] = array[l + i];
 
-    for (j = 0; j < right_length; j++)
-    temp_right[j] = array[m + j];
-
-    i = 0, j = 0;
-    while (i < left_length && j < right_length)
+    i = 0, j = (m - l);
+    while (i < left_length && j < left_length + right_length)
     {
-        if (temp_left[i] < temp_right[j])
-        array[k++] = temp_left[i++];
+        if (temp[i] < temp[j])
+        array[k++] = temp[i++];
         else
-        array[k++] = temp_right[j++];
+        array[k++] = temp[j++];
     }
     while (i < left_length)
-    array[k++] = temp_left[i++];
+    array[k++] = temp[i++];
 
-    while (j < right_length)
-    array[k++] = temp_right[j++];
-    
-}
-
-
-int main(void)
-{
-    int array[] = {19, 48, 99, 71, 13, 52, 96, 73, 86, 7};
-    size_t n = sizeof(array) / sizeof(array[0]);
-
-    print_array(array, n);
-    printf("\n");
-    merge_sort(array, n);
-    printf("\n");
-    print_array(array, n);
-    return (0);
+    while (j < left_length + right_length)
+    array[k++] = temp[j++];
+    free(temp);
 }
